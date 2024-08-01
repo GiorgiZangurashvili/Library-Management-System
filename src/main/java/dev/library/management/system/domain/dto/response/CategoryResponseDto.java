@@ -1,46 +1,37 @@
-package dev.library.management.system.domain.entity;
+package dev.library.management.system.domain.dto.response;
 
 import dev.library.management.system.domain.enums.Genre;
-import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
 import java.util.Objects;
 
-@Entity
-@Table(name = "CATEGORIES")
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-public class Category {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class CategoryResponseDto {
     private long id;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private Genre genre;
-
-    @ManyToMany(mappedBy = "categories", cascade = CascadeType.REMOVE)
-    private List<Book> books;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Category category = (Category) o;
-        return id == category.id;
+        CategoryResponseDto that = (CategoryResponseDto) o;
+        return id == that.id && genre == that.genre;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hash(id, genre);
     }
 
     @Override
     public String toString() {
-        return "Category{" +
+        return "CategoryResponseDto{" +
                 "id=" + id +
                 ", genre=" + genre +
                 '}';

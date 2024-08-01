@@ -1,43 +1,30 @@
-package dev.library.management.system.domain.entity;
+package dev.library.management.system.domain.dto.response;
 
-import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Objects;
 
-@Entity
-@Table(name = "AUTHORS")
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-public class Author {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class AuthorResponseDto {
     private long id;
-
-    @Column(nullable = false)
     private String firstName;
-
-    @Column(nullable = false)
     private String lastName;
-
     private String biography;
-
-    @Column(nullable = false)
     private LocalDate birthDate;
-
-    @OneToMany(mappedBy = "author", cascade = CascadeType.REMOVE)
-    private List<Book> books;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Author author = (Author) o;
-        return id == author.id;
+        AuthorResponseDto that = (AuthorResponseDto) o;
+        return id == that.id;
     }
 
     @Override
@@ -47,7 +34,7 @@ public class Author {
 
     @Override
     public String toString() {
-        return "Author{" +
+        return "AuthorResponseDto{" +
                 "id=" + id +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +

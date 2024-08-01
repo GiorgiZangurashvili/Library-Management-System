@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/library
+    username: postgres
+    password: spring
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+  flyway:
+    locations: classpath:db/migration
+    enabled: true
+
+server:
+  port: 1291

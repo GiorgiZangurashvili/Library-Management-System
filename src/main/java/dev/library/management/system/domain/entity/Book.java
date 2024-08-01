@@ -20,14 +20,14 @@ public class Book {
     @Column(nullable = false)
     private String title;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(
             name = "AUTHOR_ID",
             foreignKey = @ForeignKey(name = "FK_BOOKS_AUTHORS_AUTHOR_ID")
     )
     private Author author;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.REMOVE)
     @JoinTable(
             name = "BOOKS_CATEGORIES",
             joinColumns = @JoinColumn(
@@ -41,7 +41,7 @@ public class Book {
     )
     private List<Category> categories;
 
-    @OneToMany(mappedBy = "borrowedBooks")
+    @OneToMany(mappedBy = "borrowedBook")
     private List<BorrowingHistory> borrowingHistory;
 
     @Override

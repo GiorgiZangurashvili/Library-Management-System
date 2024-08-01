@@ -20,7 +20,7 @@ public class User {
     @Column(nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "borrowingUsers")
+    @OneToMany(mappedBy = "borrowingUser")
     private List<BorrowingHistory> borrowingHistory;
 
     @Override
