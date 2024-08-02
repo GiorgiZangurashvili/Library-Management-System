@@ -9,7 +9,12 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "CATEGORIES")
+@Table(
+        name = "CATEGORIES",
+        indexes = {
+                @Index(name = "IDX_CATEGORY_GENRE", columnList = "GENRE")
+        }
+)
 @Getter
 @Setter
 public class Category {

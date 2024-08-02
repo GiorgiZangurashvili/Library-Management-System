@@ -9,4 +9,10 @@ import java.util.List;
 
 @Repository
 public interface AuthorRepository extends JpaRepository<Author, Long> {
+
+    @Query("""
+        SELECT a FROM Author a WHERE a.firstName LIKE %:firstName% AND a.lastName LIKE %:lastName%
+    """)
+    List<Author> findByFirstNameAndLastName(String firstName, String lastName);
+
 }

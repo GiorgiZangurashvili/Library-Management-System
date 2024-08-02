@@ -9,7 +9,13 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "AUTHORS")
+@Table(
+        name = "AUTHORS",
+        indexes = {
+                @Index(name = "IDX_AUTHOR_FIRST_NAME", columnList = "FIRST_NAME"),
+                @Index(name = "IDX_AUTHOR_LAST_NAME", columnList = "LAST_NAME")
+        }
+)
 @Getter
 @Setter
 public class Author {

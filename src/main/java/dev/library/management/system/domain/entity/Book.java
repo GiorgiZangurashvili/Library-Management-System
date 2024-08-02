@@ -8,7 +8,13 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "BOOKS")
+@Table(
+        name = "BOOKS",
+        indexes = {
+                @Index(name = "IDX_BOOK_TITLE", columnList = "TITLE"),
+                @Index(name = "IDX_BOOK_AUTHOR_ID", columnList = "AUTHOR_ID")
+        }
+)
 @Getter
 @Setter
 public class Book {
@@ -19,6 +25,8 @@ public class Book {
 
     @Column(nullable = false)
     private String title;
+
+    private boolean isBorrowed;
 
     @ManyToOne
     @JoinColumn(
@@ -37,7 +45,11 @@ public class Book {
             inverseJoinColumns = @JoinColumn(
                     name = "CATEGORY_ID",
                     foreignKey = @ForeignKey(name = "FK_BOOKS_CATEGORIES_CATEGORY_ID")
-            )
+            ),
+            indexes = {
+                    @Index(name = "IDX_BOOK_ID", columnList = "BOOK_ID"),
+                    @Index(name = "IDX_CATEGORY_ID", columnList = "CATEGORY_ID")
+            }
     )
     private List<Category> categories;
 
@@ -62,6 +74,7 @@ public class Book {
         return "Book{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
+                ", isBorrowed=" + isBorrowed +
                 ", author=" + author +
                 '}';
     }

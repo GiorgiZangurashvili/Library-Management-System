@@ -21,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -125,6 +126,7 @@ public class BookServiceImpl implements BookService {
         log.info("*** saveBook(BookRequestDto bookRequestDto) method called ***");
         Book book = new Book();
         book.setTitle(bookRequestDto.getTitle());
+        book.setBorrowed(false);
 
         Optional<Author> authorOptional = authorRepository.findById(bookRequestDto.getAuthorId());
 

@@ -8,7 +8,13 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name = "BORROWING_HISTORY")
+@Table(
+        name = "BORROWING_HISTORY",
+        indexes = {
+                @Index(name = "IDX_BORROWING_HISTORY_USER_ID", columnList = "USER_ID"),
+                @Index(name = "IDX_BORROWING_HISTORY_BOOK_ID", columnList = "BOOK_ID")
+        }
+)
 @Getter
 @Setter
 public class BorrowingHistory {
@@ -20,13 +26,15 @@ public class BorrowingHistory {
     @Column(nullable = false)
     private LocalDateTime borrowedDate;
 
+    private LocalDateTime returnedDate;
+
     @ManyToOne
     @JoinColumn(
             name = "BORROWER_ID",
             foreignKey = @ForeignKey(name = "FK_BORROWING_HISTORY_USER_ID"),
             nullable = false
     )
-    private User borrowingUsers;
+    private User borrowingUser;
 
     @ManyToOne
     @JoinColumn(
@@ -34,7 +42,7 @@ public class BorrowingHistory {
             foreignKey = @ForeignKey(name = "FK_BORROWING_HISTORY_BOOK_ID"),
             nullable = false
     )
-    private Book borrowedBooks;
+    private Book borrowedBook;
 
     @Override
     public boolean equals(Object o) {
@@ -54,8 +62,9 @@ public class BorrowingHistory {
         return "BorrowingHistory{" +
                 "id=" + id +
                 ", borrowedDate=" + borrowedDate +
-                ", borrowingUsers=" + borrowingUsers +
-                ", borrowedBooks=" + borrowedBooks +
+                ", returnedDate=" + returnedDate +
+                ", borrowingUser=" + borrowingUser +
+                ", borrowedBook=" + borrowedBook +
                 '}';
     }
 }
