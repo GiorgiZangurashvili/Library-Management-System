@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+// TODO fix n + 1 bugs
 @Repository
 public interface BorrowingHistoryRepository extends JpaRepository<BorrowingHistory, Long> {
 

@@ -8,7 +8,7 @@ import dev.library.management.system.domain.entity.Category;
 import dev.library.management.system.domain.enums.EntityName;
 import dev.library.management.system.domain.enums.Genre;
 import dev.library.management.system.domain.mapper.BookMapper;
-import dev.library.management.system.exception.EntityNotFoundException;
+import dev.library.management.system.exception.notfound.EntityNotFoundException;
 import dev.library.management.system.repository.AuthorRepository;
 import dev.library.management.system.repository.BookRepository;
 import dev.library.management.system.repository.CategoryRepository;
@@ -21,7 +21,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,18 +40,18 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<BookResponseDto> getAllBooks() {
         log.info("*** getAllBooks() method called ***");
-        return bookRepository.findAll()
+        return bookRepository.findAllBooks()
                 .stream()
                 .map(bookMapper::mapBookToBookResponseDto)
                 .toList();
     }
 
     @Override
-    public Page<BookResponseDto> getAllBooksWithPagination(final int pageNumber, final int pageSize) {
+    public List<BookResponseDto> getAllBooksWithPagination(final int pageNumber, final int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<Book> booksPage = bookRepository.findAll(pageable);
 
-        return booksPage.map(bookMapper::mapBookToBookResponseDto);
+        return booksPage.getContent().stream().map(bookMapper::mapBookToBookResponseDto).toList();
     }
 
     @Override
@@ -87,7 +86,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Page<BookResponseDto> searchFilteredBooksPage(
+    public List<BookResponseDto> searchFilteredBooksPage(
             final String title,
             final Long authorId,
             final Genre genre,
@@ -101,7 +100,7 @@ public class BookServiceImpl implements BookService {
                 title, authorId, genre, pageable
         );
 
-        return filteredBooks.map(bookMapper::mapBookToBookResponseDto);
+        return filteredBooks.getContent().stream().map(bookMapper::mapBookToBookResponseDto).toList();
     }
 
     @Override
@@ -124,8 +123,7 @@ public class BookServiceImpl implements BookService {
     @Transactional
     public BookResponseDto saveBook(final BookRequestDto bookRequestDto) {
         log.info("*** saveBook(BookRequestDto bookRequestDto) method called ***");
-        Book book = new Book();
-        book.setTitle(bookRequestDto.getTitle());
+        Book book = bookMapper.mapBookRequestDtoToBook(bookRequestDto);
         book.setBorrowed(false);
 
         Optional<Author> authorOptional = authorRepository.findById(bookRequestDto.getAuthorId());

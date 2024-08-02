@@ -4,8 +4,8 @@ import dev.library.management.system.domain.dto.request.BookRequestDto;
 import dev.library.management.system.domain.dto.response.BookResponseDto;
 import dev.library.management.system.domain.enums.Genre;
 import dev.library.management.system.service.interfaces.BookService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +24,7 @@ public class BookController {
     }
 
     @GetMapping("/page")
-    public ResponseEntity<Page<BookResponseDto>> getAllBooksPage(
+    public ResponseEntity<List<BookResponseDto>> getAllBooksPage(
             @RequestParam(required = false, defaultValue = "0") int pageNumber,
             @RequestParam(required = false, defaultValue = "20") int pageSize
     ) {
@@ -47,7 +47,7 @@ public class BookController {
     }
 
     @GetMapping("/filter")
-    public ResponseEntity<Page<BookResponseDto>> getBooksPageByFilter(
+    public ResponseEntity<List<BookResponseDto>> getBooksPageByFilter(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) Long authorId,
             @RequestParam(required = false) Genre genre,
@@ -68,7 +68,7 @@ public class BookController {
     }
 
     @PostMapping
-    public ResponseEntity<BookResponseDto> saveBook(@RequestBody BookRequestDto bookRequestDto) {
+    public ResponseEntity<BookResponseDto> saveBook(@RequestBody @Valid BookRequestDto bookRequestDto) {
         return ResponseEntity.ok(bookService.saveBook(bookRequestDto));
     }
 

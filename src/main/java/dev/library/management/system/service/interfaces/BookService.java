@@ -10,11 +10,11 @@ import java.util.List;
 
 public interface BookService {
     List<BookResponseDto> getAllBooks();
-    Page<BookResponseDto> getAllBooksWithPagination(int pageNumber, int pageSize);
+    List<BookResponseDto> getAllBooksWithPagination(int pageNumber, int pageSize);
     BookResponseDto getBookById(long id);
     List<BookResponseDto> getBooksByTitle(String title);
     List<BookResponseDto> getBooksByGenre(Genre genre);
-    Page<BookResponseDto> searchFilteredBooksPage(String title, Long authorId, Genre genre, int pageNumber, int pageSize);
+    List<BookResponseDto> searchFilteredBooksPage(String title, Long authorId, Genre genre, int pageNumber, int pageSize);
     List<BookResponseDto> getBooksByAuthorId(long authorId);
     List<BookResponseDto> getBooksByAuthorFirstName(String authorFirstName);
     BookResponseDto saveBook(BookRequestDto bookRequestDto);

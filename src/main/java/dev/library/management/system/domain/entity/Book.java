@@ -1,8 +1,7 @@
 package dev.library.management.system.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 import java.util.Objects;
@@ -15,8 +14,11 @@ import java.util.Objects;
                 @Index(name = "IDX_BOOK_AUTHOR_ID", columnList = "AUTHOR_ID")
         }
 )
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
+@Builder
 public class Book {
 
     @Id

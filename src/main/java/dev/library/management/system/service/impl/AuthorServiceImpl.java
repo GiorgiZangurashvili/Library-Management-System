@@ -5,7 +5,7 @@ import dev.library.management.system.domain.dto.response.AuthorResponseDto;
 import dev.library.management.system.domain.entity.Author;
 import dev.library.management.system.domain.enums.EntityName;
 import dev.library.management.system.domain.mapper.AuthorMapper;
-import dev.library.management.system.exception.EntityNotFoundException;
+import dev.library.management.system.exception.notfound.EntityNotFoundException;
 import dev.library.management.system.repository.AuthorRepository;
 import dev.library.management.system.service.interfaces.AuthorService;
 import lombok.RequiredArgsConstructor;

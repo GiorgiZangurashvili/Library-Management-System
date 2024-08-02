@@ -9,15 +9,28 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
+// TODO fix n + 1 bugs
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long> {
+
     @Query("""
         SELECT b FROM Book b
-        JOIN b.categories c
+        JOIN FETCH b.author
+        LEFT JOIN FETCH b.categories
+        ORDER BY b.id
+    """)
+    List<Book> findAllBooks();
+
+    @Query("""
+        SELECT b FROM Book b
+        JOIN FETCH b.author
+        LEFT JOIN FETCH b.categories c
         WHERE (:title IS NULL OR b.title LIKE %:title%)
             AND (:authorId IS NULL OR b.author.id = :authorId)
             AND (:genre IS NULL OR c.genre = :genre)
+        ORDER BY b.id
     """)
     Page<Book> findAllBySpecifiedParameters(
             String title,
@@ -25,6 +38,14 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             Genre genre,
             Pageable pageable
     );
+
+    @Query("""
+        SELECT b FROM Book b
+        JOIN FETCH b.author
+        LEFT JOIN FETCH b.categories
+        WHERE b.id = :id
+    """)
+    Optional<Book> findById(long id);
 
     @Query("""
         SELECT b FROM Book b WHERE b.title = :title

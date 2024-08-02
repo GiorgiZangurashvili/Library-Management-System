@@ -7,7 +7,13 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 
-@Mapper(componentModel = "spring", uses = {AuthorMapper.class, CategoryMapper.class})
+@Mapper(
+        componentModel = "spring",
+        uses = {
+                AuthorMapper.class,
+                CategoryMapper.class
+        }
+)
 public interface BookMapper {
 
     @Mappings(value = {
