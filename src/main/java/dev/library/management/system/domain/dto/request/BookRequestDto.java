@@ -14,5 +14,5 @@ public record BookRequestDto(
         @Positive(message = "authorId of book should be positive")
         Long authorId,
 
-        List<Long> categoryIds) {
-}
+        List<Long> categoryIds
+) {}

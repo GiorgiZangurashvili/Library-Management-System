@@ -4,6 +4,7 @@ import dev.library.management.system.domain.dto.response.BorrowingHistoryRespons
 import dev.library.management.system.service.interfaces.BorrowingHistoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class BorrowingHistoryController {
     }
 
     @GetMapping("/user")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<List<BorrowingHistoryResponseDto>> getBorrowingHistoryOfUser(
             @RequestParam long userId
     ) {
@@ -27,6 +29,7 @@ public class BorrowingHistoryController {
     }
 
     @GetMapping("/book")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<List<BorrowingHistoryResponseDto>> getBorrowingHistoryOfBook(
             @RequestParam long bookId
     ) {
@@ -34,6 +37,7 @@ public class BorrowingHistoryController {
     }
 
     @PostMapping("/borrowBook")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BorrowingHistoryResponseDto> borrowBook(
             @RequestParam long userId,
             @RequestParam long bookId
@@ -42,6 +46,7 @@ public class BorrowingHistoryController {
     }
 
     @PutMapping("/returnBook")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BorrowingHistoryResponseDto> returnBook(
             @RequestParam long borrowingHistoryId
     ) {

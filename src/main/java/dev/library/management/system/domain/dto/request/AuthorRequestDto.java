@@ -16,5 +16,4 @@ public record AuthorRequestDto(
         LocalDate birthDate,
 
         String biography
-) {
-}
+) {}

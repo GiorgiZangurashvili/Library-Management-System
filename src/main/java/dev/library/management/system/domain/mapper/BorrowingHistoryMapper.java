@@ -12,5 +12,13 @@ public interface BorrowingHistoryMapper {
             @Mapping(source = "borrowedBook.id", target = "borrowedBookId")
     })
     BorrowingHistoryResponseDto mapBorrowingHistoryToBorrowingHistoryResponseDto(BorrowingHistory borrowingHistory);
-    
+
+//    @AfterMapping
+//    default void afterMappingBorrowingHistoryToResponseDto(
+//            BorrowingHistory borrowingHistory,
+//            @MappingTarget BorrowingHistoryResponseDto responseDto
+//    ) {
+//        responseDto.setBorrowerId(borrowingHistory.getBorrowingUser().getId());
+//        responseDto.setBorrowedBookId(borrowingHistory.getBorrowedBook().getId());
+//    }
 }

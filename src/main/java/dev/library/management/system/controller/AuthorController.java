@@ -5,6 +5,7 @@ import dev.library.management.system.domain.dto.response.AuthorResponseDto;
 import dev.library.management.system.service.interfaces.AuthorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,11 +35,13 @@ public class AuthorController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN')")
     public ResponseEntity<AuthorResponseDto> saveAuthor(@RequestBody AuthorRequestDto authorRequestDto) {
         return ResponseEntity.ok(authorService.saveAuthor(authorRequestDto));
     }
 
     @PutMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN')")
     public ResponseEntity<AuthorResponseDto> updateAuthorBiography(
             @RequestParam long id,
             @RequestBody String biography
@@ -47,6 +50,7 @@ public class AuthorController {
     }
 
     @DeleteMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN')")
     public ResponseEntity<AuthorResponseDto> deleteAuthor(@RequestParam long id) {
         return ResponseEntity.ok(authorService.deleteAuthor(id));
     }

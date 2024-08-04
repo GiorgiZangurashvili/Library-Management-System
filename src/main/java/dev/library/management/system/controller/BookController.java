@@ -7,6 +7,7 @@ import dev.library.management.system.service.interfaces.BookService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -68,11 +69,13 @@ public class BookController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN')")
     public ResponseEntity<BookResponseDto> saveBook(@RequestBody @Valid BookRequestDto bookRequestDto) {
         return ResponseEntity.ok(bookService.saveBook(bookRequestDto));
     }
 
     @DeleteMapping("/delete")
+    @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN')")
     public ResponseEntity<BookResponseDto> deleteBookById(@RequestParam long id) {
         return ResponseEntity.ok(bookService.deleteBookById(id));
     }
