@@ -1,24 +1,15 @@
 package dev.library.management.system.domain.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.time.LocalDate;
 import java.util.Objects;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
-public class AuthorResponseDto {
-    private long id;
-    private String firstName;
-    private String lastName;
-    private String biography;
-    private LocalDate birthDate;
-
+public record AuthorResponseDto(
+        long id,
+        String firstName,
+        String lastName,
+        String biography,
+        LocalDate birthDate
+) {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

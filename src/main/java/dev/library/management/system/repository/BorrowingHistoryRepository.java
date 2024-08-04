@@ -7,17 +7,35 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-// TODO fix n + 1 bugs
 @Repository
 public interface BorrowingHistoryRepository extends JpaRepository<BorrowingHistory, Long> {
 
     @Query("""
-        SELECT bh FROM BorrowingHistory bh WHERE bh.borrowingUser.id = :id
+        SELECT bh FROM BorrowingHistory bh
+        JOIN FETCH bh.borrowingUser
+        JOIN FETCH bh.borrowedBook
+        JOIN FETCH bh.borrowedBook.author
+        ORDER BY bh.id
+    """)
+    List<BorrowingHistory> findAllHistory();
+
+    @Query("""
+        SELECT bh FROM BorrowingHistory bh
+        JOIN FETCH bh.borrowingUser
+        JOIN FETCH bh.borrowedBook
+        JOIN FETCH bh.borrowedBook.author
+        WHERE bh.borrowingUser.id = :id
+        ORDER BY bh.id
     """)
     List<BorrowingHistory> findByBorrowerId(long id);
 
     @Query("""
-        SELECT bh FROM BorrowingHistory bh WHERE bh.borrowedBook.id = :id
+        SELECT bh FROM BorrowingHistory bh
+        JOIN FETCH bh.borrowingUser
+        JOIN FETCH bh.borrowedBook
+        JOIN FETCH bh.borrowedBook.author
+        WHERE bh.borrowedBook.id = :id
+        ORDER BY bh.id
     """)
     List<BorrowingHistory> findByBorrowedBookId(long id);
 

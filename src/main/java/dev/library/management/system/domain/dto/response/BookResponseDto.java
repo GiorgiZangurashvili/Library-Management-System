@@ -1,24 +1,15 @@
 package dev.library.management.system.domain.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.util.List;
 import java.util.Objects;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
-public class BookResponseDto {
-    private long id;
-    private String title;
-    private boolean isBorrowed;
-    private AuthorResponseDto author;
-    private List<CategoryResponseDto> categories;
-
+public record BookResponseDto(
+        long id,
+        String title,
+        boolean isBorrowed,
+        AuthorResponseDto author,
+        List<CategoryResponseDto> categories
+) {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

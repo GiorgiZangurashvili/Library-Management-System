@@ -40,6 +40,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<BookResponseDto> getAllBooks() {
         log.info("*** getAllBooks() method called ***");
+
         return bookRepository.findAllBooks()
                 .stream()
                 .map(bookMapper::mapBookToBookResponseDto)
@@ -49,7 +50,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<BookResponseDto> getAllBooksWithPagination(final int pageNumber, final int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Page<Book> booksPage = bookRepository.findAll(pageable);
+        Page<Book> booksPage = bookRepository.findAllWithPagination(pageable);
 
         return booksPage.getContent().stream().map(bookMapper::mapBookToBookResponseDto).toList();
     }
@@ -126,16 +127,18 @@ public class BookServiceImpl implements BookService {
         Book book = bookMapper.mapBookRequestDtoToBook(bookRequestDto);
         book.setBorrowed(false);
 
-        Optional<Author> authorOptional = authorRepository.findById(bookRequestDto.getAuthorId());
+        Optional<Author> authorOptional = authorRepository.findById(bookRequestDto.authorId());
 
         if (authorOptional.isEmpty()) {
-            log.error("Error while retrieving author with id = {}, Reason: Not Found", bookRequestDto.getAuthorId());
-            throw new EntityNotFoundException(EntityName.Author, bookRequestDto.getAuthorId());
+            log.error("Error while retrieving author with id = {}, Reason: Not Found", bookRequestDto.authorId());
+            throw new EntityNotFoundException(EntityName.Author, bookRequestDto.authorId());
         }
 
         book.setAuthor(authorOptional.get());
 
-        List<Category> categories = categoryRepository.findAllByIdIn(bookRequestDto.getCategoryIds());
+        System.out.println("START CATEGORY QUERIES");
+        List<Category> categories = categoryRepository.findAllByIdIn(bookRequestDto.categoryIds());
+        System.out.println("END CATEGORY QUERIES");
         book.setCategories(categories);
 
         bookRepository.save(book);

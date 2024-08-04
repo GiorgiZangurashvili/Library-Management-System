@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-// TODO fix n + 1 bugs
 @Repository
 public interface AuthorRepository extends JpaRepository<Author, Long> {
 

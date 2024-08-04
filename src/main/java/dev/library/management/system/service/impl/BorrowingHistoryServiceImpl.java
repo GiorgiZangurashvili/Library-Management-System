@@ -36,7 +36,7 @@ public class BorrowingHistoryServiceImpl implements BorrowingHistoryService {
     @Override
     public List<BorrowingHistoryResponseDto> getBorrowingHistory() {
         log.info("*** getBorrowingHistory() method called ***");
-        return borrowingHistoryRepository.findAll()
+        return borrowingHistoryRepository.findAllHistory()
                 .stream()
                 .map(borrowingHistoryMapper::mapBorrowingHistoryToBorrowingHistoryResponseDto)
                 .toList();

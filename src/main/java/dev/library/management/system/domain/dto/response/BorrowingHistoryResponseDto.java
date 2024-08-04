@@ -1,20 +1,37 @@
 package dev.library.management.system.domain.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.time.LocalDateTime;
+import java.util.Objects;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
-public class BorrowingHistoryResponseDto {
-    private long id;
-    private LocalDateTime borrowedDate;
-    private LocalDateTime returnedDate;
-    private long borrowedBookId;
-    private long borrowerId;
+public record BorrowingHistoryResponseDto(
+        long id,
+        LocalDateTime borrowedDate,
+        LocalDateTime returnedDate,
+        long borrowedBookId,
+        long borrowerId
+) {
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BorrowingHistoryResponseDto that = (BorrowingHistoryResponseDto) o;
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return "BorrowingHistoryResponseDto{" +
+                "id=" + id +
+                ", borrowedDate=" + borrowedDate +
+                ", returnedDate=" + returnedDate +
+                ", borrowedBookId=" + borrowedBookId +
+                ", borrowerId=" + borrowerId +
+                '}';
+    }
 }

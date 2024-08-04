@@ -11,7 +11,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-// TODO fix n + 1 bugs
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long> {
 
@@ -22,6 +21,14 @@ public interface BookRepository extends JpaRepository<Book, Long> {
         ORDER BY b.id
     """)
     List<Book> findAllBooks();
+
+    @Query("""
+        SELECT b FROM Book b
+        JOIN FETCH b.author
+        LEFT JOIN FETCH b.categories
+        ORDER BY b.id
+    """)
+    Page<Book> findAllWithPagination(Pageable pageable);
 
     @Query("""
         SELECT b FROM Book b
@@ -48,25 +55,34 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     Optional<Book> findById(long id);
 
     @Query("""
-        SELECT b FROM Book b WHERE b.title = :title
+        SELECT b FROM Book b
+        JOIN FETCH b.author
+        LEFT JOIN FETCH b.categories
+        WHERE b.title LIKE %:title%
     """)
     List<Book> findByTitle(String title);
 
     @Query("""
-        SELECT b FROM Book b WHERE b.author.id = :authorId
+        SELECT b FROM Book b
+        JOIN FETCH b.author
+        LEFT JOIN FETCH b.categories
+        WHERE b.author.id = :authorId
     """)
     List<Book> findAllByAuthorId(long authorId);
 
     @Query("""
-        SELECT b FROM Book b WHERE b.author.firstName LIKE %:authorFirstName%
+        SELECT b FROM Book b
+        JOIN FETCH b.author
+        LEFT JOIN FETCH b.categories
+        WHERE b.author.firstName LIKE %:authorFirstName%
     """)
     List<Book> findAllByAuthorFirstName(String authorFirstName);
 
     @Query("""
         SELECT b FROM Book b
-        JOIN b.categories c
+        JOIN FETCH b.author
+        LEFT JOIN FETCH b.categories c
         WHERE c.genre = :genre
     """)
     List<Book> findAllByGenre(Genre genre);
-
 }
