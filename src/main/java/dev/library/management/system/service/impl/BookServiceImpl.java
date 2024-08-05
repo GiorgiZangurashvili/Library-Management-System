@@ -48,7 +48,10 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookResponseDto> getAllBooksWithPagination(final int pageNumber, final int pageSize) {
+    public List<BookResponseDto> getAllBooksWithPagination(
+            final int pageNumber,
+            final int pageSize
+    ) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<Book> booksPage = bookRepository.findAllWithPagination(pageable);
 
@@ -56,7 +59,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookResponseDto getBookById(final long id) {
+    public BookResponseDto getBookById(final long id) throws EntityNotFoundException {
         log.info("*** getBookById(long id) method called ***");
         Optional<Book> bookOptional = bookRepository.findById(id);
 
@@ -122,7 +125,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public BookResponseDto saveBook(final BookRequestDto bookRequestDto) {
+    public BookResponseDto saveBook(final BookRequestDto bookRequestDto) throws EntityNotFoundException {
         log.info("*** saveBook(BookRequestDto bookRequestDto) method called ***");
         Book book = bookMapper.mapBookRequestDtoToBook(bookRequestDto);
         book.setBorrowed(false);
@@ -148,7 +151,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public BookResponseDto deleteBookById(final long id) {
+    public BookResponseDto deleteBookById(final long id) throws EntityNotFoundException {
         log.info("*** deleteBookById(long id) method called ***");
 
         Optional<Book> bookOptional = bookRepository.findById(id);

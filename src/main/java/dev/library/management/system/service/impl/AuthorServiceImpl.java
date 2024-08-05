@@ -37,7 +37,7 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public AuthorResponseDto getAuthorById(final long id) {
+    public AuthorResponseDto getAuthorById(final long id) throws EntityNotFoundException {
         log.info("*** getAuthorById(long id) method called ***");
 
         Optional<Author> authorOptional = authorRepository.findById(id);
@@ -75,7 +75,10 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     @Transactional
-    public AuthorResponseDto updateAuthor(final long id, final String biography) {
+    public AuthorResponseDto updateAuthor(
+            final long id,
+            final String biography
+    ) throws EntityNotFoundException {
         log.info("*** updateAuthor(AuthorRequestDto authorRequestDto) method called ***");
 
         Optional<Author> authorOptional = authorRepository.findById(id);
@@ -93,7 +96,7 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     @Transactional
-    public AuthorResponseDto deleteAuthor(final long id) {
+    public AuthorResponseDto deleteAuthor(final long id) throws EntityNotFoundException {
         log.info("*** deleteAuthor(long id) method called ***");
 
         Optional<Author> authorOptional = authorRepository.findById(id);

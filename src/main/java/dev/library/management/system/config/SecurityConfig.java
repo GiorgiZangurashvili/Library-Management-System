@@ -27,34 +27,34 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-        var uds = new InMemoryUserDetailsManager();
-
-        UserDetails user = User
-                .withUsername("user")
-                .password(passwordEncoder().encode("password"))
-                .roles("USER")
-                .build();
-
-        UserDetails admin = User
-                .withUsername("admin")
-                .password(passwordEncoder().encode("admin"))
-                .roles("ADMIN")
-                .build();
-
-        UserDetails librarian = User
-                .withUsername("librarian")
-                .password(passwordEncoder().encode("password"))
-                .roles("LIBRARIAN")
-                .build();
-
-        uds.createUser(user);
-        uds.createUser(admin);
-        uds.createUser(librarian);
-
-        return uds;
-    }
+//    @Bean
+//    public UserDetailsService userDetailsService() {
+//        var uds = new InMemoryUserDetailsManager();
+//
+//        UserDetails user = User
+//                .withUsername("user")
+//                .password(passwordEncoder().encode("password"))
+//                .roles("USER")
+//                .build();
+//
+//        UserDetails admin = User
+//                .withUsername("admin")
+//                .password(passwordEncoder().encode("admin"))
+//                .roles("ADMIN")
+//                .build();
+//
+//        UserDetails librarian = User
+//                .withUsername("librarian")
+//                .password(passwordEncoder().encode("password"))
+//                .roles("LIBRARIAN")
+//                .build();
+//
+//        uds.createUser(user);
+//        uds.createUser(admin);
+//        uds.createUser(librarian);
+//
+//        return uds;
+//    }
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {

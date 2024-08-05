@@ -5,5 +5,6 @@ public enum EntityName {
     Book,
     BorrowingHistory,
     Category,
-    User
+    User,
+    Role
 }

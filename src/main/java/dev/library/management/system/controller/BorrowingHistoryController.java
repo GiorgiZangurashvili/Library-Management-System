@@ -16,12 +16,13 @@ public class BorrowingHistoryController {
     private final BorrowingHistoryService borrowingHistoryService;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN', 'USER')")
     public ResponseEntity<List<BorrowingHistoryResponseDto>> getBorrowingHistory() {
         return ResponseEntity.ok(borrowingHistoryService.getBorrowingHistory());
     }
 
     @GetMapping("/user")
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN', 'USER')")
     public ResponseEntity<List<BorrowingHistoryResponseDto>> getBorrowingHistoryOfUser(
             @RequestParam long userId
     ) {
@@ -29,7 +30,7 @@ public class BorrowingHistoryController {
     }
 
     @GetMapping("/book")
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN', 'USER')")
     public ResponseEntity<List<BorrowingHistoryResponseDto>> getBorrowingHistoryOfBook(
             @RequestParam long bookId
     ) {
