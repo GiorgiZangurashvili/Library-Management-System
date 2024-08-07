@@ -1,5 +1,6 @@
 package dev.library.management.system.domain.dto.response;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -9,7 +10,7 @@ public record AuthorResponseDto(
         String lastName,
         String biography,
         LocalDate birthDate
-) {
+) implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

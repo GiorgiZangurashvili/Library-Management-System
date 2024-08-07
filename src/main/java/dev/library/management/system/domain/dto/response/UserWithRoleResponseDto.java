@@ -1,5 +1,6 @@
 package dev.library.management.system.domain.dto.response;
 
+import java.io.Serializable;
 import java.util.List;
 
 public record UserWithRoleResponseDto(
@@ -7,4 +8,4 @@ public record UserWithRoleResponseDto(
         String username
         // TODO UPDATE MAPPER
 //        List<String> roles
-) {}
+) implements Serializable {}

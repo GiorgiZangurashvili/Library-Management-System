@@ -1,5 +1,6 @@
 package dev.library.management.system.domain.dto.response;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -9,7 +10,7 @@ public record BorrowingHistoryResponseDto(
         LocalDateTime returnedDate,
         long borrowedBookId,
         long borrowerId
-) {
+) implements Serializable {
 
     @Override
     public boolean equals(Object o) {

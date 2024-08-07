@@ -37,6 +37,7 @@ public class BookServiceImpl implements BookService {
     /* Mappers */
     private final BookMapper bookMapper;
 
+
     @Override
     public List<BookResponseDto> getAllBooks() {
         log.info("*** getAllBooks() method called ***");
@@ -89,6 +90,7 @@ public class BookServiceImpl implements BookService {
         return books.stream().map(bookMapper::mapBookToBookResponseDto).toList();
     }
 
+    // TODO add check if author with authorId exists
     @Override
     public List<BookResponseDto> searchFilteredBooksPage(
             final String title,
@@ -107,6 +109,8 @@ public class BookServiceImpl implements BookService {
         return filteredBooks.getContent().stream().map(bookMapper::mapBookToBookResponseDto).toList();
     }
 
+    //TODO if author with authorId doesn't exist
+    // throw exception
     @Override
     public List<BookResponseDto> getBooksByAuthorId(final long authorId) {
         log.info("*** getBookByAuthorId(long authorId) method called ***");
@@ -139,13 +143,10 @@ public class BookServiceImpl implements BookService {
 
         book.setAuthor(authorOptional.get());
 
-        System.out.println("START CATEGORY QUERIES");
         List<Category> categories = categoryRepository.findAllByIdIn(bookRequestDto.categoryIds());
-        System.out.println("END CATEGORY QUERIES");
         book.setCategories(categories);
 
         bookRepository.save(book);
-
         return bookMapper.mapBookToBookResponseDto(book);
     }
 
