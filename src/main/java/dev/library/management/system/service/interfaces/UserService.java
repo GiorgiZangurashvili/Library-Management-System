@@ -31,21 +31,26 @@ public interface UserService {
             throws NotLoggedInException, UsernameNotFoundException;
 
     /**
-     * Deletes a user from the database by their ID.
+     * Disables a user from the database by their ID.
      *
      * @param id The ID of the user to delete.
      * @return A UserResponseDto object representing the deleted user.
      * @throws EntityNotFoundException If no user is found with the given ID.
      */
-    UserResponseDto deleteUserById(long id) throws EntityNotFoundException;
+    UserResponseDto disableUserById(long id) throws EntityNotFoundException;
 
     /**
-     * Deletes a user from the database by their username.
+     * Disables a user from the database by their username.
      *
      * @param username The username of the user to delete.
      * @return A UserResponseDto object representing the deleted user.
      * @throws UsernameNotFoundException If no user is found with the given username.
      */
-    UserResponseDto deleteUserByUsername(String username) throws UsernameNotFoundException;
+    UserResponseDto disableUserByUsername(String username) throws UsernameNotFoundException;
+
+    /**
+     * Deletes users from the database by their ids.
+     */
+    void deleteDisabledUsers();
 
 }

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,10 +31,14 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    private boolean isDisabled;
+
+    private LocalDateTime disabledDate;
+
     @OneToMany(mappedBy = "borrowingUser")
     private List<BorrowingHistory> borrowingHistory;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinTable(
             name = "USER_ROLES",
             joinColumns = @JoinColumn(

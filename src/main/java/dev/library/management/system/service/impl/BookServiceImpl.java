@@ -12,6 +12,8 @@ import dev.library.management.system.exception.notfound.EntityNotFoundException;
 import dev.library.management.system.repository.AuthorRepository;
 import dev.library.management.system.repository.BookRepository;
 import dev.library.management.system.repository.CategoryRepository;
+import dev.library.management.system.service.aop.annotation.Loggable;
+import dev.library.management.system.service.aop.annotation.Timed;
 import dev.library.management.system.service.interfaces.BookService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,11 +24,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Loggable(className = "BookServiceImpl")
+@Timed
 public class BookServiceImpl implements BookService {
 
     /* Repositories */
@@ -40,8 +45,6 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<BookResponseDto> getAllBooks() {
-        log.info("*** getAllBooks() method called ***");
-
         return bookRepository.findAllBooks()
                 .stream()
                 .map(bookMapper::mapBookToBookResponseDto)
@@ -61,7 +64,6 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookResponseDto getBookById(final long id) throws EntityNotFoundException {
-        log.info("*** getBookById(long id) method called ***");
         Optional<Book> bookOptional = bookRepository.findById(id);
 
         if (bookOptional.isEmpty()) {
@@ -74,7 +76,6 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<BookResponseDto> getBooksByTitle(final String title) {
-        log.info("*** getBookByTitle(String title) method called ***");
         List<Book> books = bookRepository.findByTitle(title);
         return books.stream()
                 .map(bookMapper::mapBookToBookResponseDto)
@@ -83,14 +84,11 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<BookResponseDto> getBooksByGenre(final Genre genre) {
-        log.info("*** getBooksByGenre(Genre genre) method called ***");
-
         List<Book> books = bookRepository.findAllByGenre(genre);
 
         return books.stream().map(bookMapper::mapBookToBookResponseDto).toList();
     }
 
-    // TODO add check if author with authorId exists
     @Override
     public List<BookResponseDto> searchFilteredBooksPage(
             final String title,
@@ -99,7 +97,13 @@ public class BookServiceImpl implements BookService {
             final int pageNumber,
             final int pageSize
     ) {
-        log.info("*** searchFilteredBooksPage(String title, long authorId, Genre genre, int pageNumber, int pageSize) method called ***");
+        if (!Objects.isNull(authorId)) {
+            Optional<Author> authorOptional = authorRepository.findById(authorId);
+            if (authorOptional.isEmpty()) {
+                log.error("Error while retrieving a book with id = {}, Reason: Not Found", authorId);
+                throw new EntityNotFoundException(EntityName.Author, authorId);
+            }
+        }
 
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<Book> filteredBooks = bookRepository.findAllBySpecifiedParameters(
@@ -109,28 +113,34 @@ public class BookServiceImpl implements BookService {
         return filteredBooks.getContent().stream().map(bookMapper::mapBookToBookResponseDto).toList();
     }
 
-    //TODO if author with authorId doesn't exist
-    // throw exception
     @Override
     public List<BookResponseDto> getBooksByAuthorId(final long authorId) {
-        log.info("*** getBookByAuthorId(long authorId) method called ***");
+        Optional<Author> authorOptional = authorRepository.findById(authorId);
+        if (authorOptional.isEmpty()) {
+            log.error("Error while retrieving a book with id = {}, Reason: Not Found", authorId);
+            throw new EntityNotFoundException(EntityName.Author, authorId);
+        }
+
         List<Book> books = bookRepository.findAllByAuthorId(authorId);
 
-        return books.stream().map(bookMapper::mapBookToBookResponseDto).toList();
+        return books
+                .stream()
+                .map(bookMapper::mapBookToBookResponseDto)
+                .toList();
     }
 
     @Override
     public List<BookResponseDto> getBooksByAuthorFirstName(final String authorFirstName) {
-        log.info("*** getBookByAuthorFirstName(String authorFirstName) method called ***");
         List<Book> books = bookRepository.findAllByAuthorFirstName(authorFirstName);
 
-        return books.stream().map(bookMapper::mapBookToBookResponseDto).toList();
+        return books
+                .stream()
+                .map(bookMapper::mapBookToBookResponseDto)
+                .toList();
     }
 
     @Override
-    @Transactional
     public BookResponseDto saveBook(final BookRequestDto bookRequestDto) throws EntityNotFoundException {
-        log.info("*** saveBook(BookRequestDto bookRequestDto) method called ***");
         Book book = bookMapper.mapBookRequestDtoToBook(bookRequestDto);
         book.setBorrowed(false);
 
@@ -153,8 +163,6 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional
     public BookResponseDto deleteBookById(final long id) throws EntityNotFoundException {
-        log.info("*** deleteBookById(long id) method called ***");
-
         Optional<Book> bookOptional = bookRepository.findById(id);
 
         if (bookOptional.isEmpty()) {

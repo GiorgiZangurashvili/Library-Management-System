@@ -1,11 +1,13 @@
 package dev.library.management.system.controller;
 
 import dev.library.management.system.domain.dto.response.BorrowingHistoryResponseDto;
+import dev.library.management.system.service.aop.annotation.Loggable;
 import dev.library.management.system.service.interfaces.BorrowingHistoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,7 @@ import java.util.List;
 @RequestMapping("/v1/api/borrowingHistory")
 @RequiredArgsConstructor
 @Tag(name = "Borrowing History API")
+@Loggable(className = "BorrowingHistoryController")
 public class BorrowingHistoryController {
     private final BorrowingHistoryService borrowingHistoryService;
 
@@ -106,7 +109,7 @@ public class BorrowingHistoryController {
             description = "Borrow a book to the user",
             responses = {
                     @ApiResponse(
-                            responseCode = "200",
+                            responseCode = "201",
                             description = "Successfully borrowed a book to the user"
                     ),
                     @ApiResponse(
@@ -131,7 +134,9 @@ public class BorrowingHistoryController {
             @RequestParam long userId,
             @RequestParam long bookId
     ) {
-        return ResponseEntity.ok(borrowingHistoryService.borrowBook(userId, bookId));
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(borrowingHistoryService.borrowBook(userId, bookId));
     }
 
     @PutMapping("/returnBook")

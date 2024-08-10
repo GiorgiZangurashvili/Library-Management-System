@@ -4,5 +4,6 @@ import java.io.Serializable;
 
 public record UserResponseDto(
         long id,
-        String username
+        String username,
+        boolean isDisabled
 ) implements Serializable {}

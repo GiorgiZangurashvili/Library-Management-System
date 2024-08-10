@@ -5,11 +5,11 @@ import dev.library.management.system.domain.entity.User;
 import dev.library.management.system.domain.entity.security.Role;
 import dev.library.management.system.domain.enums.RoleName;
 import dev.library.management.system.domain.mapper.UserMapper;
-import dev.library.management.system.exception.notfound.EntityNotFoundException;
 import dev.library.management.system.exception.notfound.RoleWithNameNotFoundException;
 import dev.library.management.system.exception.notfound.UsernameNotFoundException;
 import dev.library.management.system.repository.UserRepository;
 import dev.library.management.system.repository.security.RoleRepository;
+import dev.library.management.system.service.aop.annotation.Loggable;
 import dev.library.management.system.service.interfaces.security.RoleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +21,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Loggable(className = "RoleServiceImpl")
 public class RoleServiceImpl implements RoleService {
     /* Repositories */
     private final RoleRepository roleRepository;
@@ -31,10 +32,8 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     @Transactional
-    public UserWithRoleResponseDto assignRoleToUser(String username, RoleName roleName)
+    public UserWithRoleResponseDto assignRoleToUser(final String username, final RoleName roleName)
             throws RoleWithNameNotFoundException, UsernameNotFoundException {
-        log.info("*** assignRoleToUser(long userId, long roleName) method called ***");
-
         Optional<Role> roleOptional = roleRepository.findRoleByRoleName(roleName);
 
         if (roleOptional.isEmpty()) {

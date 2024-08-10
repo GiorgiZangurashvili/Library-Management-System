@@ -2,6 +2,7 @@ package dev.library.management.system.controller.security;
 
 import dev.library.management.system.domain.dto.response.UserWithRoleResponseDto;
 import dev.library.management.system.domain.enums.RoleName;
+import dev.library.management.system.service.aop.annotation.Loggable;
 import dev.library.management.system.service.interfaces.security.RoleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/v1/api/security/roles")
 @RequiredArgsConstructor
 @Tag(name = "Roles API")
+@Loggable(className = "RoleController")
 public class RoleController {
     private final RoleService roleService;
 

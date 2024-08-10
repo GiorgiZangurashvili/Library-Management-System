@@ -3,12 +3,15 @@ package dev.library.management.system.controller;
 import dev.library.management.system.domain.dto.request.BookRequestDto;
 import dev.library.management.system.domain.dto.response.BookResponseDto;
 import dev.library.management.system.domain.enums.Genre;
+import dev.library.management.system.service.aop.annotation.Loggable;
+import dev.library.management.system.service.aop.annotation.Timed;
 import dev.library.management.system.service.interfaces.BookService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +22,8 @@ import java.util.List;
 @RequestMapping("/v1/api/books")
 @RequiredArgsConstructor
 @Tag(name = "Books API")
+@Loggable(className = "BookController")
+@Timed
 public class BookController {
     private final BookService bookService;
 
@@ -193,8 +198,8 @@ public class BookController {
             description = "Save a new book",
             responses = {
                     @ApiResponse(
-                            responseCode = "200",
-                            description = "Successfully saved a new book in library"
+                            responseCode = "201",
+                            description = "Successfully created a new book in library"
                     ),
                     @ApiResponse(
                             responseCode = "401",
@@ -238,7 +243,9 @@ public class BookController {
             }
     )
     public ResponseEntity<BookResponseDto> deleteBookById(@RequestParam long id) {
-        return ResponseEntity.ok(bookService.deleteBookById(id));
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(bookService.deleteBookById(id));
     }
 
 }

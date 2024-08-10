@@ -11,6 +11,7 @@ import dev.library.management.system.exception.notfound.EntityNotFoundException;
 import dev.library.management.system.repository.BookRepository;
 import dev.library.management.system.repository.BorrowingHistoryRepository;
 import dev.library.management.system.repository.UserRepository;
+import dev.library.management.system.service.aop.annotation.Loggable;
 import dev.library.management.system.service.interfaces.BorrowingHistoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Loggable(className = "BorrowingHistoryImpl")
 public class BorrowingHistoryServiceImpl implements BorrowingHistoryService {
     /* Repositories */
     private final BorrowingHistoryRepository borrowingHistoryRepository;
@@ -35,7 +37,6 @@ public class BorrowingHistoryServiceImpl implements BorrowingHistoryService {
 
     @Override
     public List<BorrowingHistoryResponseDto> getBorrowingHistory() {
-        log.info("*** getBorrowingHistory() method called ***");
         return borrowingHistoryRepository.findAllHistory()
                 .stream()
                 .map(borrowingHistoryMapper::mapBorrowingHistoryToBorrowingHistoryResponseDto)
@@ -44,8 +45,6 @@ public class BorrowingHistoryServiceImpl implements BorrowingHistoryService {
 
     @Override
     public List<BorrowingHistoryResponseDto> getBorrowingHistoryOfUser(final long userId) {
-        log.info("*** getBorrowingHistoryOfUser(long userId) method called ***");
-
         Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isEmpty()) {
             log.error("Error while retrieving user with id = {}, Reason: Not Found", userId);
@@ -60,8 +59,6 @@ public class BorrowingHistoryServiceImpl implements BorrowingHistoryService {
 
     @Override
     public List<BorrowingHistoryResponseDto> getBorrowingHistoryOfBook(final long bookId) {
-        log.info("*** getBorrowingHistoryOfBook(long id) method called ***");
-
         Optional<Book> bookOptional = bookRepository.findById(bookId);
         if (bookOptional.isEmpty()) {
             log.error("Error while retrieving book with id = {}, Reason: Not Found", bookId);
@@ -77,7 +74,6 @@ public class BorrowingHistoryServiceImpl implements BorrowingHistoryService {
     @Override
     @Transactional
     public BorrowingHistoryResponseDto borrowBook(final long userId, final long bookId) {
-        log.info("*** borrowBook(long userId, long bookId) method called ***");
         BorrowingHistory borrowingHistory = new BorrowingHistory();
         borrowingHistory.setBorrowedDate(LocalDateTime.now());
 
@@ -105,7 +101,7 @@ public class BorrowingHistoryServiceImpl implements BorrowingHistoryService {
         borrowingHistory.setBorrowedBook(book);
 
         borrowingHistoryRepository.save(borrowingHistory);
-        log.info("Saved a new borrowingHistory");
+        log.info("Saved a new borrowingHistory with id = {}", borrowingHistory.getId());
 
         return borrowingHistoryMapper
                 .mapBorrowingHistoryToBorrowingHistoryResponseDto(borrowingHistory);
@@ -114,8 +110,6 @@ public class BorrowingHistoryServiceImpl implements BorrowingHistoryService {
     @Override
     @Transactional
     public BorrowingHistoryResponseDto returnBook(final long borrowingHistoryId) {
-        log.info("*** returnBook(long userId, long bookId) method called ***");
-
         Optional<BorrowingHistory> borrowingHistoryOptional = borrowingHistoryRepository
                 .findById(borrowingHistoryId);
         if (borrowingHistoryOptional.isEmpty()) {

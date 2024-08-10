@@ -14,20 +14,26 @@ import dev.library.management.system.exception.notfound.RoleWithNameNotFoundExce
 import dev.library.management.system.exception.notfound.UsernameNotFoundException;
 import dev.library.management.system.repository.UserRepository;
 import dev.library.management.system.repository.security.RoleRepository;
+import dev.library.management.system.service.aop.annotation.Loggable;
 import dev.library.management.system.service.interfaces.UserService;
 import dev.library.management.system.service.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Loggable(className = "UserServiceImpl")
+// TODO ADD ENABLE ACCOUNT
 public class UserServiceImpl implements UserService {
     /* Repositories */
     private final UserRepository userRepository;
@@ -39,11 +45,14 @@ public class UserServiceImpl implements UserService {
     /* PasswordEncoder */
     private final PasswordEncoder passwordEncoder;
 
+    /* Properties */
+    @Value("${disabled-account-duration}")
+    private int disabledAccountDuration;
+
     @Override
     @Transactional
-    public UserWithRoleResponseDto saveUser(UserRequestDto userRequestDto) throws RoleWithNameNotFoundException {
-        log.info("*** saveUser(UserRequestDto userRequestDto) method called ***)");
-
+    public UserWithRoleResponseDto saveUser(final UserRequestDto userRequestDto)
+            throws RoleWithNameNotFoundException {
         User user = userMapper.mapUserRequestDtoToUser(userRequestDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
@@ -64,11 +73,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
-    public UserResponseDto updateUserCredentials(UserRequestDto userRequestDto)
+    public UserResponseDto updateUserCredentials(final UserRequestDto userRequestDto)
             throws NotLoggedInException, UsernameNotFoundException {
-        log.info("*** updateUserCredentials(UserRequestDto userRequestDto) method called ***)");
-
         Optional<String> currentUsernameOptional = SecurityUtil.getCurrentUsername();
 
         if (currentUsernameOptional.isEmpty()) {
@@ -91,42 +97,51 @@ public class UserServiceImpl implements UserService {
         return userMapper.mapUserToUserResponseDto(userRepository.save(user));
     }
 
-
-    //TODO add disabling feature
-    // When user tries to delete his/her account
-    // at first account will be disabled,
-    // after 30 days it will be deleted
     @Override
-    @Transactional
-    public UserResponseDto deleteUserById(long id) throws EntityNotFoundException {
-        log.info("*** deleteUserById(long id) method called ***)");
+    public UserResponseDto disableUserById(final long id) throws EntityNotFoundException {
+        Optional<User> userOptional = userRepository.findById(id);
 
-        Optional<User> user = userRepository.findById(id);
-
-        if (user.isEmpty()) {
+        if (userOptional.isEmpty()) {
             log.error("Error while deleting a user with id = {}, Reason: Not Found", id);
             throw new EntityNotFoundException(EntityName.User, id);
         }
 
-        userRepository.deleteById(id);
+        User user = userOptional.get();
+        user.setDisabled(true);
+        user.setDisabledDate(LocalDateTime.now());
 
-        return userMapper.mapUserToUserResponseDto(user.get());
+        return userMapper.mapUserToUserResponseDto(userRepository.save(user));
     }
 
     @Override
-    @Transactional
-    public UserResponseDto deleteUserByUsername(String username) throws UsernameNotFoundException {
-        log.info("*** deleteUserByUsername(String username) method called ***)");
+    public UserResponseDto disableUserByUsername(final String username) throws UsernameNotFoundException {
+        Optional<User> userOptional = userRepository.findByUsername(username);
 
-        Optional<User> user = userRepository.findByUsername(username);
-
-        if (user.isEmpty()) {
+        if (userOptional.isEmpty()) {
             log.error("Error while deleting a user with name = {}, Reason: Not Found", username);
             throw new UsernameNotFoundException(username);
         }
 
-        userRepository.deleteByUsername(username);
+        User user = userOptional.get();
+        user.setDisabled(true);
+        user.setDisabledDate(LocalDateTime.now());
 
-        return userMapper.mapUserToUserResponseDto(user.get());
+        return userMapper.mapUserToUserResponseDto(userRepository.save(user));
+    }
+
+    //TODO create query that will delete users
+    // NOT OPTIMAL
+    @Override
+    @Transactional
+    public void deleteDisabledUsers() {
+        List<User> disabledUsers = userRepository.findAllByDisabled(true);
+        List<Long> filteredDisabledUserIds = disabledUsers
+                .stream()
+                .filter(user -> ChronoUnit.DAYS
+                        .between(user.getDisabledDate(), LocalDateTime.now()) >= disabledAccountDuration)
+                .map(User::getId)
+                .toList();
+
+        userRepository.deleteByIdIn(filteredDisabledUserIds);
     }
 }

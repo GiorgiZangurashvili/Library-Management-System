@@ -3,11 +3,13 @@ package dev.library.management.system.controller;
 import dev.library.management.system.domain.dto.request.UserRequestDto;
 import dev.library.management.system.domain.dto.response.UserResponseDto;
 import dev.library.management.system.domain.dto.response.UserWithRoleResponseDto;
+import dev.library.management.system.service.aop.annotation.Loggable;
 import dev.library.management.system.service.interfaces.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/v1/api/users")
 @RequiredArgsConstructor
 @Tag(name = "Users API")
+@Loggable(className = "UserController")
 public class UserController {
     private final UserService userService;
 
@@ -24,7 +27,7 @@ public class UserController {
             description = "Create a new user",
             responses = {
                     @ApiResponse(
-                            responseCode = "200",
+                            responseCode = "201",
                             description = "Successfully created a new user"
                     ),
                     @ApiResponse(
@@ -34,7 +37,9 @@ public class UserController {
             }
     )
     public ResponseEntity<UserWithRoleResponseDto> createUser(@RequestBody UserRequestDto userRequestDto) {
-        return ResponseEntity.ok(userService.saveUser(userRequestDto));
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(userService.saveUser(userRequestDto));
     }
 
     @PutMapping("/credentials")
@@ -64,10 +69,10 @@ public class UserController {
         return ResponseEntity.ok(userService.updateUserCredentials(userRequestDto));
     }
 
-    @DeleteMapping("/delete/id")
+    @DeleteMapping("/disable/id")
     @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN', 'USER')")
     @Operation(
-            description = "Delete a user by id",
+            description = "Disable a user by id",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -87,14 +92,14 @@ public class UserController {
                     )
             }
     )
-    public ResponseEntity<UserResponseDto> deleteUserById(@RequestParam long id) {
-        return ResponseEntity.ok(userService.deleteUserById(id));
+    public ResponseEntity<UserResponseDto> disableUserById(@RequestParam long id) {
+        return ResponseEntity.ok(userService.disableUserById(id));
     }
 
-    @DeleteMapping("/delete/username")
+    @DeleteMapping("/disable/username")
     @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN', 'USER')")
     @Operation(
-            description = "Delete a user by username",
+            description = "Disable a user by username",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -114,8 +119,8 @@ public class UserController {
                     )
             }
     )
-    public ResponseEntity<UserResponseDto> deleteUserByUsername(@RequestParam String username) {
-        return ResponseEntity.ok(userService.deleteUserByUsername(username));
+    public ResponseEntity<UserResponseDto> disableUserByUsername(@RequestParam String username) {
+        return ResponseEntity.ok(userService.disableUserByUsername(username));
     }
 
 }
